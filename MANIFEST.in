@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include bar_system *.css
+recursive-include bar_system *.csv
+recursive-include bar_system *.html
+recursive-include bar_system *.ico
+recursive-include bar_system *.js
+recursive-include bar_system *.json
+recursive-include bar_system *.md
+recursive-include bar_system *.png
+recursive-include bar_system *.py
+recursive-include bar_system *.svg
+recursive-include bar_system *.txt
+recursive-exclude bar_system *.pyc
