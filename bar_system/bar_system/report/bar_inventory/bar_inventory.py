@@ -8,7 +8,7 @@ def execute(filters=None):
 	# columns, data = [], []
 	# return columns, data
 	columns = get_columns()
-	data = get_data()
+	data = get_data(filters)
 	return columns,data
 
 # def execute(filters=None):
@@ -17,7 +17,7 @@ def execute(filters=None):
 #     print(f"\n\n\n{filters}\n\n\n")
 #     data = frappe.db.sql("""Select item_code,actual_qty,incoming_rate,posting_date from `tabStock Ledger Entry`;""")
 #     return data
-def get_data():
+def get_data(filters = None):
 	main_bottle_name = frappe.db.get_all("Item", 
 	filters={
 			"disabled": 0,
@@ -46,7 +46,7 @@ def get_data():
 			else:
 				main_bottle_qty += bottle_data[1]
 				frappe.msgprint(f'{main_bottle_qty}')
-		total_qty = str(int(main_bottle_qty)) + "bottles" + " " + str(int(loose_bottle_quantity)) + " " + "ml"
+		total_qty = str(int(main_bottle_qty)) + " " + "bottles" + " " + str(int(loose_bottle_quantity)) + " " + "ml"
 		row.append([brand_name, main_bottle_qty, loose_bottle_quantity, total_qty])
 	frappe.msgprint(f'{row}')
 	return row
