@@ -11,11 +11,10 @@ from frappe.model.document import Document
 
 
 class Orders(Document):
-	def validate(self):
+	def on_submit(self):
                 available_stock = 0
-                if self.status == "Done":
-                        for item in self.items:
-                                        if item.order_status:
+                for item in self.items:
+                                        if item.order_status == 'True' or self.status == "Done":
                                                 item_code = item.items
                                                 order_quantity = int(item.quantity)
                                                 item_doc = frappe.get_doc("Item",item_code)
@@ -24,7 +23,7 @@ class Orders(Document):
                                                         "Item",
                                                         filters={
                                                                 "brand": brand,
-                                                                "opening_stock": (">", 0)
+                                                                "inventory_item":1
                                                         },
                                                         fieldname="item_code"
                                                 )
@@ -75,35 +74,32 @@ class Orders(Document):
                                                 if count > 0:        
                                                         if bottle_stock >= count:
                                                                 #reduce stock from Main Bottel
-                                                                # stock_entry_update(count, main_bottle_itemcode,"Material Issue",default_warehouse)
+                                                                stock_entry_update(count, main_bottle_itemcode,"Material Issue",default_warehouse)
 
                                                                 #update stock of Losse bootel
                                                                 stock_entry_update(new_loose_bottle_quantity - initial_loose_bottle_stock,f"{brand}- Loose Bottle","Material Receipt",default_warehouse)
 
                                                                 # reduce stock of Loose bottel
-                                                                # stock_entry_update(total_order_qty,f"{brand}- Loose Bottle","Material Issue",default_warehouse)
+                                                                stock_entry_update(total_order_qty,f"{brand}- Loose Bottle","Material Issue",default_warehouse)
 
                                                                 #stock entry for item packs
                                                                 stock_entry_update(order_quantity,item_code,"Material Receipt",default_warehouse)
 
                                                                 #stock issue for item packs
-                                                                # stock_entry_update(order_quantity, item_code,"Material Issue",default_warehouse)
+                                                                stock_entry_update(order_quantity, item_code,"Material Issue",default_warehouse)
                                                         else:
                                                                 frappe.throw(f"Not enough stock for {brand} - Bottle.Available stock is {available_stock}")
                                                 else:
                                                         #reduce the stock frome loosebottel 
-                                                        # stock_entry_update(total_order_qty,f"{brand}- Loose Bottle","Material Issue",default_warehouse)
+                                                        stock_entry_update(total_order_qty,f"{brand}- Loose Bottle","Material Issue",default_warehouse)
 
                                                         #stock entry for item packs
                                                         stock_entry_update(order_quantity, item_code,"Material Receipt",default_warehouse)
 
                                                         #stock issue for item packs
-                                                        # stock_entry_update(order_quantity, item_code,"Material Issue",default_warehouse)
+                                                        stock_entry_update(order_quantity, item_code,"Material Issue",default_warehouse)
                                         else:
-                                                frappe.throw("please confirm your order.")
-                        available_stock = 0
-                else:
-                        frappe.throw("Status should be Done to procced")                                        
+                                                frappe.throw("please confirm your order.")                                        
                                         
 
                                 
